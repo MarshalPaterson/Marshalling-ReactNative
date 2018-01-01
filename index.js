@@ -1,0 +1,1 @@
+require("./artifacts/index.js");
