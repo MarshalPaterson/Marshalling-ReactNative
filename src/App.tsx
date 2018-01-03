@@ -10,7 +10,6 @@ import {
   View,
   StyleSheet
 } from 'react-native';
-import tester from './test';
 import * as Marshalling from "./Marshalling";
 
 interface props {}
@@ -21,7 +20,6 @@ interface state {
 
 export default class App extends Component<props, state> {
 
-  public greeter = new tester();
   public marshalling = new Marshalling.Marshall();
 
   constructor(props){
@@ -32,13 +30,13 @@ export default class App extends Component<props, state> {
   componentDidMount() {
     this.marshalling.getInstance().addService('tester', 'https://jsonplaceholder.typicode.com/comments');
     this.marshalling.getInstance().law('tester').then(
-    function (value) {
-        console.log('Contents: ' + value);
+     (value) => {
+        let obj = JSON.parse(String(value));
         this.setState({
-          data: value
-          });
+          data: obj[0].name
+        });
     },
-    function (reason) {
+    (reason) => {
         console.error('Something went wrong', reason);
     });
   }
@@ -46,11 +44,7 @@ export default class App extends Component<props, state> {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.instructions}>
-          {this.greeter.helloWorld()}
-          </Text>
           <Text style={styles.instructions}>
-          {/* {this.m.helloWorld()} */}
           {this.state.data}
           </Text>
           {/* <Button onPress={getPostCall} title="POST" color="#841584" />

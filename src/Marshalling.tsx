@@ -21,15 +21,17 @@ export class Marshall {
     protected getService(name){
         return this.register[name];
     }
-    public law(name, method='GET') {
-        return new Promise(
+    public async law(name, method='GET') {
+        let url:string = this.getService(name);
+        return await new Promise(
             function (resolve, reject) {
                 var request = new XMLHttpRequest();
                 request.onreadystatechange = function () {
-                    if (this.status === 200) {
+                    if (this.readyState === 4 && this.status === 200) {
                         // Success
-                        resolve(this.response);
-                    } else {
+                        if(this.response!=="")
+                            resolve(this.response);
+                    } else if (this.readyState === 4 && this.status !== 0) {
                         // Something went wrong (404 etc.)
                         reject(new Error(this.statusText));
                     }
@@ -38,7 +40,7 @@ export class Marshall {
                     reject(new Error(
                         'XMLHttpRequest Error: '+this.statusText));
                 };
-                request.open(method, this.getService(name));
+                request.open(method, url);
                 request.send();    
             });
     }    
