@@ -10,7 +10,7 @@ import {
   View,
   StyleSheet
 } from 'react-native';
-import * as Marshalling from "./Marshalling";
+import * as Marshalling from "marshalling";
 
 interface props {}
 
