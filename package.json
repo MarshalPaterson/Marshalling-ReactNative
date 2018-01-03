@@ -1,5 +1,5 @@
 {
-  "name": "Marshalling",
+  "name": "marshallingdemo",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -10,8 +10,8 @@
     "build": "npm run clean && npm run tsc --"
   },
   "dependencies": {
-    "marshalling": "^4.0.12",
     "react": "16.0.0",
+    "react-dom": "^16.2.0",
     "react-native": "0.51.0",
     "tsc": "^1.20150623.0"
   },

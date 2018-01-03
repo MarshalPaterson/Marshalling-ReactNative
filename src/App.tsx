@@ -7,48 +7,75 @@
 import React, { Component } from 'react';
 import {
   Text,
-  View
+  View,
+  StyleSheet
 } from 'react-native';
-
-// import * as Marshalling from 'marshalling';
-import { DemoAppController } from "../src/Controls/DemoAppController";
-import { DemoAppService } from "../src/Service/DemoAppService";
-// import { GetEvent } from "../src/Events/GetEvent";
-// import { PostEvent } from "../src/Events/PostEvent";
 import tester from './test';
+import * as Marshalling from "./Marshalling";
 
-// function getCustomCall() {
-//   var customDispatcher = Marshalling.Marshalling.MarshallEventDispatcher.getInstance();
-//   // var customEvent = new Marshalling.MarshallEvent();
-//   // customDispatcher.dispatchEvent(customEvent.dispatch(DemoAppController.GET_LIST, "Just a event with txt"));
-//   var customEventWithCommand = new GetEvent(DemoAppController.EVENT_CUSTOM, "some param text");
-//   customEventWithCommand.data = "This is data";
-//   customDispatcher.dispatchEvent(customEventWithCommand);
-// }
-// function getPostCall() {
-//   var customDispatcher = Marshalling.Marshalling.MarshallEventDispatcher.getInstance();
-//   var customEventWithCommand = new PostEvent(DemoAppController.ANOTHER_EVENT_CUSTOM, "some param text");
-//   customDispatcher.dispatchEvent(customEventWithCommand);
-// }
+interface props {}
 
-// NEED BUTTONS FOR THE ABOVE
+interface state {
+    data: Object;
+}
 
-export default class App extends Component<{}> {
+export default class App extends Component<props, state> {
 
   public greeter = new tester();
+  public marshalling = new Marshalling.Marshall();
+
+  constructor(props){
+    super(props);
+    this.state = {data: []};
+  }
 
   componentDidMount() {
-    DemoAppController.init();
-    DemoAppService.init();
+    this.marshalling.getInstance().addService('tester', 'https://jsonplaceholder.typicode.com/comments');
+    this.marshalling.getInstance().law('tester').then(
+    function (value) {
+        console.log('Contents: ' + value);
+        this.setState({
+          data: value
+          });
+    },
+    function (reason) {
+        console.error('Something went wrong', reason);
+    });
   }
 
   render() {
     return (
-      <View>
-        <Text >
+      <View style={styles.container}>
+        <Text style={styles.instructions}>
           {this.greeter.helloWorld()}
-        </Text>
+          </Text>
+          <Text style={styles.instructions}>
+          {/* {this.m.helloWorld()} */}
+          {this.state.data}
+          </Text>
+          {/* <Button onPress={getPostCall} title="POST" color="#841584" />
+        <Button onPress={getCustomCall} title="GET" color="#841584" /> */}
+
       </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+  },
+  instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+  },
+});
