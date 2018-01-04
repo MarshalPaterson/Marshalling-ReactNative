@@ -15,7 +15,9 @@ import * as Marshalling from "marshalling";
 interface props {}
 
 interface state {
-    data: Object;
+    data: Object,
+    postdata:Object,
+    getdata: Object
 }
 
 export default class App extends Component<props, state> {
@@ -24,16 +26,21 @@ export default class App extends Component<props, state> {
 
   constructor(props){
     super(props);
-    this.state = {data: []};
+    this.state = {data: [], postdata:[], getdata:[]};
   }
 
   componentDidMount() {
-    this.marshalling.getInstance().addService('tester', 'https://jsonplaceholder.typicode.com/comments');
+    this.getExample();
+    this.postExample();
+  }
+
+  public getExample() {
+    this.marshalling.getInstance().addService('tester', 'https://jsonplaceholder.typicode.com/posts?userId=1');
     this.marshalling.getInstance().law('tester').then(
      (value) => {
         let obj = JSON.parse(String(value));
         this.setState({
-          data: obj[0].name
+          getdata: obj[0].body
         });
     },
     (reason) => {
@@ -41,11 +48,36 @@ export default class App extends Component<props, state> {
     });
   }
 
+  public postExample() {
+    let data = JSON.stringify({
+      title: 'foo',
+      body: 'bar',
+      userId: 1
+    })
+    this.marshalling.getInstance().addService('tester', 'https://jsonplaceholder.typicode.com/posts?userId=1');
+    this.marshalling.getInstance().law('tester', 'POST', data).then(
+     (value) => {
+        let obj = JSON.parse(String(value));
+        this.setState({
+          postdata: obj.body
+        });
+    },
+    (reason) => {
+        console.error('Something went wrong', reason);
+    });  
+  }
+
   render() {
     return (
       <View style={styles.container}>
           <Text style={styles.instructions}>
           {this.state.data}
+          </Text>
+          <Text style={styles.instructions}>
+          {this.state.postdata}
+          </Text>
+          <Text style={styles.instructions}>
+          {this.state.getdata}
           </Text>
           {/* <Button onPress={getPostCall} title="POST" color="#841584" />
         <Button onPress={getCustomCall} title="GET" color="#841584" /> */}
